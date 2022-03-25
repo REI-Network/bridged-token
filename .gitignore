@@ -7,4 +7,5 @@ dist
 #Hardhat files
 cache
 artifacts
+deployments
 types
