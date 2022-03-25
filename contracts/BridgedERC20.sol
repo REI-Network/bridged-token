@@ -70,7 +70,7 @@ contract BridgedERC20 is ERC20Pausable, AccessControlEnumerable {
      */
     function burnFrom(address account, uint256 amount) public virtual {
         Supply storage s = minterSupply[_msgSender()];
-        if (s.cap > 0) {
+        if (s.cap > 0 || s.total > 0) {
             require(s.total > amount, "BridgedERC20: burn amount exceeds minter total supply");
             unchecked {
                 s.total -= amount;
