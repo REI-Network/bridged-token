@@ -1,14 +1,15 @@
 {
   "name": "bridged-token",
   "version": "0.0.1",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "npx hardhat compile && npx hardhat typechain",
+    "build": "npx hardhat compile && tsc",
     "node": "npx hardhat node",
     "test": "npx hardhat test",
     "lint": "eslint ./**/*.ts",
     "clean": "rm -rf ./node_modules && npm run clean:build",
-    "clean:build": "rm -rf ./artifacts ./cache ./deployments ./types"
+    "clean:build": "rm -rf ./artifacts ./cache ./deployments ./types ./dist"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
