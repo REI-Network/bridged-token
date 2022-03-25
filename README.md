@@ -46,4 +46,4 @@ import { BridgedERC20__factory } from "@rei-network/bridged-token";
 
 ## License
 
-MIT
+[MIT](./LICENSE)
