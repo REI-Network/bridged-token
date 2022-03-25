@@ -1,3 +1,9 @@
-hardhat.config.js
-scripts
-test
+.env
+.vscode
+
+node_modules
+
+#Hardhat files
+cache
+artifacts
+types
