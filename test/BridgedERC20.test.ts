@@ -122,7 +122,7 @@ describe('BridgedERC20', () => {
     expect(await token.methods.allowance(user, bridge2).call()).be.equal('100');
   });
 
-  it('should burnFrom succeed', async () => {
+  it('should burnFrom succeed(1)', async () => {
     await token.methods.burnFrom(user, 5).send({ from: bridge1 });
     await token.methods.burnFrom(user, 5).send({ from: bridge2 });
     const b1 = await token.methods.minterSupply(bridge1).call();
@@ -146,10 +146,22 @@ describe('BridgedERC20', () => {
     expect(await token.methods.balanceOf(user).call()).be.equal(`${9 + 95 + 95}`);
   });
 
+  it('should burnFrom succeed(2)', async () => {
+    await token.methods.burnFrom(user, 5).send({ from: bridge1 });
+    await token.methods.burnFrom(user, 5).send({ from: bridge2 });
+    const b1 = await token.methods.minterSupply(bridge1).call();
+    const b2 = await token.methods.minterSupply(bridge2).call();
+    expect(b1.cap).be.equal('100');
+    expect(b1.total).be.equal('95');
+    expect(b2.cap).be.equal('100');
+    expect(b2.total).be.equal('95');
+    expect(await token.methods.balanceOf(user).call()).be.equal(`${9 + 95 + 95 - 10}`);
+  });
+
   it('should mint fail when too many token minted', async () => {
     let succeed = false;
     try {
-      await token.methods.mint(user, 1).send({ from: bridge1 });
+      await token.methods.mint(user, 100).send({ from: bridge1 });
       succeed = true;
     } catch (err) {
       // ignore
@@ -170,7 +182,7 @@ describe('BridgedERC20', () => {
   it('should mint fail after revoke role', async () => {
     let succeed = false;
     try {
-      await token.methods.mint(user, 10).send({ from: bridge1 });
+      await token.methods.mint(user, 1).send({ from: bridge1 });
       succeed = true;
     } catch (err) {
       // ignore
