@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
 
 contract BridgedERC20 is
-    Context,
-    ERC20,
     ERC20Pausable,
     AccessControlEnumerable
 {
@@ -40,6 +36,13 @@ contract BridgedERC20 is
         return _decimals;
     }
 
+    /**
+     * @dev Minter mint token
+     *
+     * Requirements:
+     *
+     * - the caller must have the `MINTER_ROLE`.
+     */
     function mint(address to, uint256 amount) public virtual {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
@@ -61,27 +64,28 @@ contract BridgedERC20 is
     }
 
     /**
-     * @dev Minter destroys `amount` tokens from the account.
-     */
-    function burnFrom(address account, uint256 amount) public virtual {
-        Supply storage s = minterSupply[_msgSender()];
-        require(s.cap > 0, "BridgedERC20: invalid caller");
-        require(
-            s.total > amount,
-            "BridgedERC20: burn amount exceeds minter total supply"
-        );
-        unchecked {
-            s.total -= amount;
-        }
-        _spendAllowance(account, _msgSender(), amount);
-        _burn(account, amount);
-    }
-
-    /**
-     * @dev Just the same as burn from
+     * @dev Just the same as burn from.
      */
     function burn(address account, uint256 amount) public virtual {
         burnFrom(account, amount);
+    }
+
+    /**
+     * @dev Destroys `amount` tokens from the account.
+     */
+    function burnFrom(address account, uint256 amount) public virtual {
+        Supply storage s = minterSupply[_msgSender()];
+        if (s.cap > 0) {
+            require(
+                s.total > amount,
+                "BridgedERC20: burn amount exceeds minter total supply"
+            );
+            unchecked {
+                s.total -= amount;
+            }
+        }
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
     }
 
     /**
@@ -118,28 +122,20 @@ contract BridgedERC20 is
         _unpause();
     }
 
-    function getMinterSupply(address minter)
-        external
-        view
-        returns (Supply memory)
-    {
-        return minterSupply[minter];
-    }
-
+    /**
+     * @dev Set minting capability for minter.
+     *
+     * Requirements:
+     *
+     * - the caller must have the `DEFAULT_ADMIN_ROLE`.
+     */
     function setMinterCap(address minter, uint256 cap)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _grantRole(MINTER_ROLE, minter);
-        minterSupply[minter].cap = cap;
+        Supply storage s = minterSupply[minter];
+        require(cap >= s.total, "BridgedERC20: capacity must be greater than or equal to total supply");
+        s.cap = cap;
         emit MinterCapUpdated(minter, cap);
-    }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual override(ERC20, ERC20Pausable) {
-        super._beforeTokenTransfer(from, to, amount);
     }
 }
