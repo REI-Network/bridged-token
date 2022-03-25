@@ -14,6 +14,8 @@ npm run test
 
 ## Deploy
 
+First please edit the `name`, `symbol` and `decimals` in `deploy/deploy.ts`
+
 ```
 export MNEMONIC="test test test test test test test test test test test junk"
 npx hardhat --network rei-testnet deploy
