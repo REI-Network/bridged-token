@@ -75,7 +75,7 @@ contract BridgedERC20 is
      */
     function burnFrom(address account, uint256 amount) public virtual {
         Supply storage s = minterSupply[_msgSender()];
-        if (s.cap > 0) {
+        if (s.total > 0) {
             require(
                 s.total > amount,
                 "BridgedERC20: burn amount exceeds minter total supply"
@@ -133,9 +133,7 @@ contract BridgedERC20 is
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        Supply storage s = minterSupply[minter];
-        require(cap >= s.total, "BridgedERC20: capacity must be greater than or equal to total supply");
-        s.cap = cap;
-        emit MinterCapUpdated(minter, cap);
+       minterSupply[minter].cap = cap;
+       emit MinterCapUpdated(minter, cap);
     }
 }
