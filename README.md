@@ -12,6 +12,13 @@ npm run build
 npm run test
 ```
 
+## Deploy
+
+```
+export MNEMONIC="test test test test test test test test test test test junk"
+npx hardhat --network rei-testnet deploy
+```
+
 ## Usage
 
 ```ts
