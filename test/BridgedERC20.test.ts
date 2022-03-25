@@ -134,6 +134,42 @@ describe('BridgedERC20', () => {
     expect(await token.methods.balanceOf(user).call()).be.equal('9');
   });
 
+  it('should pause succeed', async () => {
+    await token.methods.pause().send({ from: deployer });
+  });
+
+  it('should mint fail when paused', async () => {
+    let succeed = false;
+    try {
+      await token.methods.mint(user, 1).send({ from: bridge1 });
+      succeed = true;
+    } catch (err) {
+      // ignore
+    }
+
+    if (succeed) {
+      assert('should mint fail when paused');
+    }
+  });
+
+  it('should burnFrom fail when paused', async () => {
+    let succeed = false;
+    try {
+      await token.methods.burnFrom(user, 1).send({ from: bridge1 });
+      succeed = true;
+    } catch (err) {
+      // ignore
+    }
+
+    if (succeed) {
+      assert('should burnFrom fail when paused');
+    }
+  });
+
+  it('should pause succeed', async () => {
+    await token.methods.unpause().send({ from: deployer });
+  });
+
   it('should mint succeed(2)', async () => {
     await token.methods.mint(user, 95).send({ from: bridge1 });
     await token.methods.mint(user, 95).send({ from: bridge2 });
