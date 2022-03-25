@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 
-contract BridgedERC20 is
-    ERC20Pausable,
-    AccessControlEnumerable
-{
+contract BridgedERC20 is ERC20Pausable, AccessControlEnumerable {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
@@ -44,10 +42,7 @@ contract BridgedERC20 is
      * - the caller must have the `MINTER_ROLE`.
      */
     function mint(address to, uint256 amount) public virtual {
-        require(
-            hasRole(MINTER_ROLE, _msgSender()),
-            "BridgedERC20: must have minter role to mint"
-        );
+        require(hasRole(MINTER_ROLE, _msgSender()), "BridgedERC20: must have minter role to mint");
         Supply storage s = minterSupply[_msgSender()];
         s.total += amount;
         require(s.total <= s.cap, "BridgedERC20: minter cap exceeded");
@@ -76,10 +71,7 @@ contract BridgedERC20 is
     function burnFrom(address account, uint256 amount) public virtual {
         Supply storage s = minterSupply[_msgSender()];
         if (s.total > 0) {
-            require(
-                s.total > amount,
-                "BridgedERC20: burn amount exceeds minter total supply"
-            );
+            require(s.total > amount, "BridgedERC20: burn amount exceeds minter total supply");
             unchecked {
                 s.total -= amount;
             }
@@ -98,10 +90,7 @@ contract BridgedERC20 is
      * - the caller must have the `PAUSER_ROLE`.
      */
     function pause() public virtual {
-        require(
-            hasRole(PAUSER_ROLE, _msgSender()),
-            "BridgedERC20: must have pauser role to pause"
-        );
+        require(hasRole(PAUSER_ROLE, _msgSender()), "BridgedERC20: must have pauser role to pause");
         _pause();
     }
 
@@ -115,10 +104,7 @@ contract BridgedERC20 is
      * - the caller must have the `PAUSER_ROLE`.
      */
     function unpause() public virtual {
-        require(
-            hasRole(PAUSER_ROLE, _msgSender()),
-            "BridgedERC20: must have pauser role to unpause"
-        );
+        require(hasRole(PAUSER_ROLE, _msgSender()), "BridgedERC20: must have pauser role to unpause");
         _unpause();
     }
 
@@ -129,11 +115,8 @@ contract BridgedERC20 is
      *
      * - the caller must have the `DEFAULT_ADMIN_ROLE`.
      */
-    function setMinterCap(address minter, uint256 cap)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-       minterSupply[minter].cap = cap;
-       emit MinterCapUpdated(minter, cap);
+    function setMinterCap(address minter, uint256 cap) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        minterSupply[minter].cap = cap;
+        emit MinterCapUpdated(minter, cap);
     }
 }
