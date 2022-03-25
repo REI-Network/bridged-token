@@ -7,7 +7,7 @@
     "build": "npx hardhat compile && tsc",
     "node": "npx hardhat node",
     "test": "npx hardhat test",
-    "lint": "eslint ./**/*.ts",
+    "lint": "eslint ./**/*.ts --no-ignore",
     "clean": "rm -rf ./node_modules && npm run clean:build",
     "clean:build": "rm -rf ./artifacts ./cache ./deployments ./types ./dist"
   },
