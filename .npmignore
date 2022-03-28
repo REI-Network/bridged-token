@@ -1,6 +1,7 @@
 .env
 .vscode
 
+audits
 node_modules
 
 #Hardhat files
