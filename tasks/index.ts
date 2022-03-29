@@ -67,7 +67,7 @@ task('set-cap', 'set minter capability')
     const { deployer } = await getNamedAccounts();
     const token = await createWeb3Contract({ artifactName: 'BridgedERC20', address: taskArgs.token, deployments, web3, artifacts, from: deployer });
     await token.methods.setMinterCap(taskArgs.address, taskArgs.cap).send();
-    console.log('Set miner capability succeed');
+    console.log('Set minter capability succeed');
   });
 
 task('minter-supply', 'print minter supply information')
