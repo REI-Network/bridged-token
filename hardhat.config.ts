@@ -1,6 +1,7 @@
 import '@typechain/hardhat';
 import '@nomiclabs/hardhat-truffle5';
 import 'hardhat-deploy';
+import './tasks';
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
