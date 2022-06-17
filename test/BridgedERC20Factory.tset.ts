@@ -17,14 +17,15 @@ describe('BridgedERC20Factory', function () {
     this.bridge1 = accounts[2];
     this.bridge2 = accounts[3];
     this.user = accounts[4];
+    this.to = '0x0000000000000000000000000000000000000000';
   });
 
   it('should deploy succeed', async function () {
     this.factory = new web3.eth.Contract(BridgedERC20Factory.abi, (await BridgedERC20Factory.new()).address, { from: this.deployer });
     await this.factory.methods.setCreationPayment(this.payment).send({ from: this.deployer });
-    await this.factory.methods.setAdminRole(this.admin).send({ from: this.deployer });
+    await this.factory.methods.setAdmin(this.admin).send({ from: this.deployer });
     expect(await this.factory.methods.creationPayment().call()).to.equal(this.payment);
-    expect(await this.factory.methods.adminRole().call()).to.equal(this.admin);
+    expect(await this.factory.methods.admin().call()).to.equal(this.admin);
   });
 
   it('should create succeed', async function () {
@@ -41,6 +42,28 @@ describe('BridgedERC20Factory', function () {
     expect(await this.token.methods.hasRole(this.PAUSER_ROLE, this.admin).call()).be.true;
     expect(await this.token.methods.hasRole(this.DEFAULT_ADMIN_ROLE, this.deployer).call()).to.be.false;
     expect(await this.token.methods.hasRole(this.PAUSER_ROLE, this.deployer).call()).be.false;
+  });
+
+  it('should create failed for poor payment', async function () {
+    let succeed = false;
+    try {
+      await this.factory.methods.create('BridgedERC20', 'BERC20', 18).send({ from: this.deployer, value: 100 });
+      succeed = true;
+    } catch (err) {}
+
+    if (succeed) {
+      assert('should create fail for poor payment');
+    }
+  });
+
+  it('should withdraw succeed', async function () {
+    const factoryBalanceBefore = await web3.eth.getBalance(this.factory._address);
+    const toAddressBalanceBefore = await web3.eth.getBalance(this.to);
+    await this.factory.methods.withdrawAll(this.to).send({ from: this.deployer });
+    const factoryBalanceAfter = await web3.eth.getBalance(this.factory._address);
+    const toAddressBalanceAfter = await web3.eth.getBalance(this.to);
+    expect(Number(factoryBalanceBefore) - Number(this.payment)).to.equal(Number(factoryBalanceAfter));
+    expect(Number(toAddressBalanceAfter) - Number(this.payment)).to.equal(Number(toAddressBalanceBefore));
   });
 
   it('should mint fail before grant role', async function () {

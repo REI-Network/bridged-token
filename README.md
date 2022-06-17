@@ -13,7 +13,7 @@ npm run test
 
 ## Deploy
 
-First please edit the `name`, `symbol` and `decimals` in `deploy/deploy.ts`
+First please edit the `admin`, `payment` in `deploy/deployFactory.ts`
 
 ```
 export MNEMONIC="test test test test test test test test test test test junk"
