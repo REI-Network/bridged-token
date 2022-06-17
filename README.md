@@ -1,3 +1,25 @@
+# BridgedERC20Factory
+
+## Build
+
+```
+npm run build
+```
+## Test
+
+```
+npm run test
+```
+
+## Deploy
+
+First please edit the `name`, `symbol` and `decimals` in `deploy/deploy.ts`
+
+```
+export MNEMONIC="test test test test test test test test test test test junk"
+npx hardhat --network rei-testnet deploy
+```
+
 # BridgedERC20
 
 ## Build

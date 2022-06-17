@@ -8,7 +8,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       from: deployer,
       log: true,
       deterministicDeployment: false,
-      args: [name, symbol, decimals]
+      args: [name, symbol, decimals, deployer]
     });
 
     console.log('name:', name, 'symbol:', symbol, 'decimals:', decimals, 'deployed at:', token.address);

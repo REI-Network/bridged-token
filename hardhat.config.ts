@@ -7,7 +7,8 @@ import './tasks';
 // Go to https://hardhat.org/config/ to learn more
 
 const accounts = {
-  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk'
+  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
+  accounts: [process.env.PRIVATEKEY]
 };
 
 /**

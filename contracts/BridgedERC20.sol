@@ -23,11 +23,12 @@ contract BridgedERC20 is ERC20Pausable, AccessControlEnumerable {
     constructor(
         string memory name,
         string memory symbol,
-        uint8 decimals_
+        uint8 decimals_,
+        address adminrole
     ) ERC20(name, symbol) {
         _decimals = decimals_;
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _setupRole(PAUSER_ROLE, _msgSender());
+        _setupRole(DEFAULT_ADMIN_ROLE, adminrole);
+        _setupRole(PAUSER_ROLE, adminrole);
     }
 
     function decimals() public view virtual override returns (uint8) {
