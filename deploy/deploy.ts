@@ -1,24 +1,24 @@
 import type { DeployFunction } from 'hardhat-deploy/dist/types';
+import type Web3 from 'web3';
+
+declare const web3: Web3;
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const deloyToken = async (name: string, symbol: string, decimals: number) => {
-    const token = await deploy('BridgedERC20', {
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: [name, symbol, decimals, deployer]
-    });
-
-    console.log('name:', name, 'symbol:', symbol, 'decimals:', decimals, 'deployed at:', token.address);
-  };
-
-  await deloyToken('Wrapped BTC', 'WBTC', 8);
-  await deloyToken('Tether USD', 'USDT', 6);
-  await deloyToken('USD Coin', 'USDC', 6);
-  await deloyToken('Wrapped Ether', 'WETH', 18);
-  await deloyToken('Dai Stablecoin', 'DAI', 18);
+  const admin = deployer;
+  const payment = 10000;
+  const bridgedERC20Factory = await deploy('BridgedERC20Factory', {
+    from: deployer,
+    log: true,
+    deterministicDeployment: false
+  });
+  const factory = new web3.eth.Contract(bridgedERC20Factory.abi, bridgedERC20Factory.address, { from: deployer });
+  await factory.methods.setCreationPayment(payment).send({ from: deployer });
+  await factory.methods.setAdmin(admin).send({ from: deployer });
+  console.log('Factory address is : ', bridgedERC20Factory.address);
+  console.log('creationPayment', await factory.methods.creationPayment().call());
+  console.log('admin', await factory.methods.admin().call());
 };
 
 export default func;

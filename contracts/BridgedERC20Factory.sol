@@ -32,7 +32,7 @@ contract BridgedERC20Factory is Ownable {
         emit CreateERC20(msg.sender, address(erc20), name, symbol, decimals_);
     }
 
-    function withdrawAll(address to) public onlyOwner {
-        payable(to).transfer(address(this).balance);
+    function withdrawAll(address payable to) public onlyOwner {
+        to.transfer(address(this).balance);
     }
 }
