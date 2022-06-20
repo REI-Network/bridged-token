@@ -79,3 +79,18 @@ task('minter-supply', 'print minter supply information')
     const info = await token.methods.minterSupply(taskArgs.address).call();
     console.log('cap:', Number(info.cap), 'total:', Number(info.total));
   });
+
+task('createErc20', 'Create a erc20 contract')
+  .addParam('address', 'factory address')
+  .addParam('name', 'token name')
+  .addParam('symbol', 'token symbol')
+  .addParam('decimals', 'token decimals')
+  .setAction(async (taskArgs, { web3, getNamedAccounts, artifacts, deployments }) => {
+    const { deployer } = await getNamedAccounts();
+    const factory = await createWeb3Contract({ artifactName: 'BridgedERC20Factory', address: taskArgs.address, deployments, web3, artifacts, from: deployer });
+    const payment = await factory.methods.creationPayment().call();
+    const tx = await factory.methods.create(taskArgs.name, taskArgs.symbol, taskArgs.decimals).send({ from: deployer, value: payment });
+    await tx;
+    console.log('Created contract at: ', tx.events[1].address);
+    console.log(deployer);
+  });

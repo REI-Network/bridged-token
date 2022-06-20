@@ -6,10 +6,7 @@ import './tasks';
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const accounts = {
-  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
-  accounts: [process.env.PRIVATEKEY]
-};
+const accounts = [process.env.PRIVATEKEY];
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
